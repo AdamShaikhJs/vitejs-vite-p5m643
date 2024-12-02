@@ -1,36 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import ApexCharts from 'apexcharts';
 
 
-function App() {
-  const [data, setData] = useState([])
-  const fetchData = async () => {
-    let res = await fetch("https://jsonplaceholder.typicode.com/todos")
-    res = await res.json()
-    setData(res)
-    console.log(res[0])
+import React, { useEffect, useReducer } from "react";
+import { useState } from "react";
+
+const App = () => {
+  const [count, setCount] = useState(1);
+  const [startTim, setStartTim] = useState(false)
+
+  const startTimer = () => {
+    setStartTim(true)
   }
+  const stopTimer = () => {
+    setStartTim(false)
+  }
+  const resetTimer = () => {
+    setStartTim(false)
+    setCount(0)
+  }
+
   useEffect(() => {
-    fetchData()
-  }, [])
+    let isTimer;
+    if (startTim) {
+      isTimer= setInterval(() => {
+        setCount((pre)=>pre+1)
+      },1000)
+    }
+   return ()=>clearInterval(isTimer)
+  }, [startTim])
 
   return (
     <>
-      <h1>fetch data</h1>
-      <div style={{ width: "500px", height: "200px" }}>
-        {
-          data.map((val) => (
-            <div>
-              <label>{val.title}</label>
-              <input type="checkbox" checked={val.completed} />
-            </div>
-
-          ))
-        }
-      </div>
+      <h1>Timer : {count}</h1>
+      <button onClick={startTimer}>start</button>
+      <button onClick={stopTimer}>stop</button>
+      <button onClick={resetTimer}>reset</button>
 
     </>
   )
 }
-
-export default App
+export default App;
